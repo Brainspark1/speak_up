@@ -20,6 +20,7 @@ import stable_retro
 from AutoTracking import AutoTracking
 from ActionFinder import ActionFinder
 
+
 class TrackingActionHandler:
     def __init__(self, env, json_path):
         self.data = self.read_json_file(json_path)
@@ -34,7 +35,9 @@ class TrackingActionHandler:
 
         self.auto_tracking_class = AutoTracking(json_path)
 
-        self.target_profiles = self.auto_tracking_class.get_distances_to_targets(env, self.auto_tracking_class.get_game_positions(env))
+        self.target_profiles = self.auto_tracking_class.get_distances_to_targets(
+            env, self.auto_tracking_class.get_game_positions(env)
+        )
 
         self.function_dictionary = ActionFinder.__get_function_dict()
 
@@ -54,22 +57,39 @@ class TrackingActionHandler:
         target = self.auto_tracking_class.pick_target(candidates)
 
         horizontal_distance = self.target_profiles["horizontal_distance"]
-        tracking_distance = int(self.data[target_type]["tracking"]["track_distance"], 16)
+        tracking_distance = int(
+            self.data[target_type]["tracking"]["track_distance"], 16
+        )
 
         function_name = self.data[target_type]["tracking"]["action"]
 
-        if horizontal_distance >= 0: # to right
-            if abs(horizontal_distance) != tracking_distance:
-                action[right_index] = 1
-            else:
-                ActionFinder.__getattr__(function_name)
-                action[right_index] = 0
-        else: # to left
-            if abs(horizontal_distance) != tracking_distance:
-                action[left_index] = 1
-            else:
-                ActionFinder.__getattr__(function_name)
-                action[left_index] = 0
+        if abs(horizontal_distance) <= tracking_distance:
+            action_function = ActionFinder.__getattr__(function_name)
+
+            command = action_function(horizontal_distance=horizontal_distance)
+
+            return command
+
+        # no need for releasing buttons as handled by main loop
+        if horizontal_distance >= 0:
+            action[right_index] = 1
+        else:
+            action[left_index] = 1
+
+        return None
+
+        # if horizontal_distance >= 0:  # to right
+        #     if abs(horizontal_distance) != tracking_distance:
+        #         action[right_index] = 1
+        #     else:
+        #         ActionFinder.__getattr__(function_name)
+        #         action[right_index] = 0
+        # else:  # to left
+        #     if abs(horizontal_distance) != tracking_distance:
+        #         action[left_index] = 1
+        #     else:
+        #         ActionFinder.__getattr__(function_name)
+        #         action[left_index] = 0
 
     def read_json_file(self, json_path):
         with open(json_path, "r") as file:

@@ -1,6 +1,7 @@
 import sys
 import stable_retro as retro
 import pygame
+import numpy as np
 
 from ManualActionHandler import ManualActionHandler
 from TrackingActionHandler import TrackingActionHandler
@@ -33,6 +34,8 @@ pygame.display.set_caption("Kirby's Adventure")
 clock = pygame.time.Clock()
 running = True
 
+BUTTON_INDICES = manual_action_handler.button2id
+
 while running:
     # Handles window close or escape key
     for event in pygame.event.get():
@@ -43,25 +46,56 @@ while running:
 
     # blank NES controller array: [B, A, MODE, START, UP, DOWN, LEFT, RIGHT]
     # All buttons default to False (0)
-    # action = [0, 0, 0, 0, 0, 0, 0, 0]
+    action = [0, 0, 0, 0, 0, 0, 0, 0]
 
-    action = manual_action_handler.get_action_array()
     duration = manual_action_handler.get_duration_array()
 
     # keyboard states
     keys = pygame.key.get_pressed()
 
-    # WASD to D-pad 
-    if keys[pygame.K_w]: action[4] = 1  # UP
-    if keys[pygame.K_s]: action[5] = 1  # DOWN
-    if keys[pygame.K_a]: action[6] = 1  # LEFT
-    if keys[pygame.K_d]: action[7] = 1  # RIGHT
+    # WASD to D-pad
+    if keys[pygame.K_w]:
+        action[4] = 1  # UP
+    if keys[pygame.K_s]:
+        action[5] = 1  # DOWN
+    if keys[pygame.K_a]:
+        action[6] = 1  # LEFT
+    if keys[pygame.K_d]:
+        action[7] = 1  # RIGHT
 
-    # E to Attack 
-    if keys[pygame.K_e]: action[0] = 1  # B
+    # E to Attack
+    if keys[pygame.K_e]:
+        action[0] = 1  # B
 
     # Spacebar to Jump (Button A)
-    if keys[pygame.K_Space]: action[1] = 1  # A
+    if keys[pygame.K_Space]:
+        action[1] = 1  # A
+
+    for i in range(8):
+        if duration[i] > 0:
+            action[i] = 1
+            duration[i] -= 1
+
+    positions = tracking_action_handler.auto_tracking_class.get_game_positions(env)
+
+    profiles = tracking_action_handler.auto_tracking_class.get_distances_to_targets(
+        env, positions
+    )
+
+    command = tracking_action_handler.go_to_target(
+        profiles,
+        left_index=BUTTON_INDICES.get("left"),
+        right_index=BUTTON_INDICES.get("right"),
+        action=action,
+    )
+
+    if command:
+        for button in command["buttons"]:
+            index = BUTTON_INDICES.get(button.lower())
+
+            if index is not None:
+                duration[index] = command["hold_frames"]
+                action[index] = 1
 
     # Step the environment forward with custom actions
     obs, reward, terminated, truncated, info = env.step(action)
@@ -69,21 +103,15 @@ while running:
     if terminated or truncated:
         obs, info = env.reset()
 
-    for d in duration:
-        if d == 0:
-            d = 0
-        else:
-            d -= 1
-
     # Converts the environment's RGB frame array to a Pygame surface and display it
     # Transpose frame array from (Height, Width, Channel) to Pygame's (Width, Height, Channel)
     frame = obs.transpose(1, 0, 2)
     surf = pygame.surfarray.make_surface(frame)
-    
+
     # Scale and draw the game frame
     scaled_surf = pygame.transform.scale(surf, (screen_width, screen_height))
     screen.blit(scaled_surf, (0, 0))
-    pygame.display.flip()  
+    pygame.display.flip()
 
     # limits fps to 60
     clock.tick(60)

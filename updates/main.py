@@ -34,6 +34,11 @@ pygame.display.set_caption("Kirby's Adventure")
 clock = pygame.time.Clock()
 running = True
 
+current_command = None  # current command
+step_index = 0  # which step in sequence for succession mode
+step_remaining = 0  # frames left on current step for succession mode
+sustain_remaining = 0  # frames left for together mode
+
 BUTTON_INDICES = manual_action_handler.button2id
 
 while running:
@@ -76,32 +81,84 @@ while running:
             action[i] = 1
             duration[i] -= 1
 
-    positions = tracking_action_handler.auto_tracking_class.get_game_positions(env)
+    if current_command is None:
+        positions = tracking_action_handler.auto_tracking_class.get_game_positions(env)
 
-    profiles = tracking_action_handler.auto_tracking_class.get_distances_to_targets(
-        env, positions
-    )
+        profiles = tracking_action_handler.auto_tracking_class.get_distances_to_targets(
+            env, positions
+        )
 
-    command = tracking_action_handler.go_to_target(
-        profiles,
-        left_index=BUTTON_INDICES.get("left"),
-        right_index=BUTTON_INDICES.get("right"),
-        action=action,
-    )
+        command = tracking_action_handler.go_to_target(
+            profiles,
+            left_index=BUTTON_INDICES.get("left"),
+            right_index=BUTTON_INDICES.get("right"),
+            action=action,
+        )
 
-    if command:
-        for button in command["buttons"]:
-            index = BUTTON_INDICES.get(button.lower())
+        if command:
+            current_command = command
 
-            if index is not None:
-                duration[index] = command["hold_frames"]
-                action[index] = 1
+            if command["succession"]:
+                step_index = 0
+                step_remaining = command["sequence_presses"][0]["duration"]
+
+                if command["direction"] == "right":
+                    action[BUTTON_INDICES.get("right")] = 1
+                else:
+                    action[BUTTON_INDICES.get("left")] = 1
+            else:
+                sustain_remaining = command["hold_frames"]
+
+            for button in command["buttons"]:
+                index = BUTTON_INDICES.get(button.lower())
+
+                if index is not None:
+                    duration[index] = command["hold_frames"]
+                    action[index] = 1
+
+    if current_command:
+        if current_command["succession"]:  # succession mode
+            if current_command["direction"] == "right":
+                action[BUTTON_INDICES.get("right")] = 1
+            else:
+                action[BUTTON_INDICES.get("left")] = 1
+
+            current_step = current_command["sequence_presses"][step_index]
+            button_index = BUTTON_INDICES.get(current_step["button"].lower())
+
+            if button_index is not None:
+                action[button_index] = 1
+
+            step_remaining -= 1
+
+            if step_remaining <= 0:
+                # moving to next step
+                step_index += 1
+
+                if step_index >= len(
+                    current_command["sequence_presses"]
+                ):  # if have reached the end
+                    current_command = None
+                else:
+                    step_remaining = current_command["sequence"][step_index]["duration"]
+        else:  # together mode
+            for button in current_command["buttons"]:
+                index = BUTTON_INDICES.get(button.lower())
+
+                if index is not None:
+                    action[index] = 1
+
+            sustain_remaining -= 1
+
+            if sustain_remaining <= 0:
+                current_command = None
 
     # Step the environment forward with custom actions
     obs, reward, terminated, truncated, info = env.step(action)
 
     if terminated or truncated:
         obs, info = env.reset()
+        current_command = None
 
     # Converts the environment's RGB frame array to a Pygame surface and display it
     # Transpose frame array from (Height, Width, Channel) to Pygame's (Width, Height, Channel)

@@ -10,13 +10,16 @@
       "description": "Short, ground-dwelling brown creature with a scowling face and triangular white eyes - goomba",
       "tracking": {
           "track_distance": 22,
-          "action": "jump",
-          "validation": "change_state"
+          "action": "jump"
       }
     },
     "red_koopa": {
       "address": "0x01",
-      "description": "Bipedal yellow turtle with a prominent red shell, large head, and oval eyes - red koopa"
+      "description": "Bipedal yellow turtle with a prominent red shell, large head, and oval eyes - red koopa",
+      "tracking": {
+        "track_distance": 22,
+        "action": "jump"
+      }
     },
     "buzzy_beetle": {
       "address": "0x02",
@@ -100,89 +103,75 @@
   "actions": {
     "jump": {
       "description": "jump hop leap bounce spring vault rise up",
-      "button": "A",
-      "mode": "once",
-      "duration": 8
+      "button_array": ["A"],
+      "duration_array": [8],
+      "succession": "False"
     },
     "run": {
       "description": "run sprint dash go fast hurry",
-      "button": "B",
-      "mode": "once",
-      "duration": 20
+      "button_array": ["B"],
+      "duration_array": [20],
+      "succession": "True"
     },
     "move left": {
       "description": "move left backwards go left back retreat",
-      "button": "left",
-      "mode": "once",
-      "duration": 30
+      "button_array": ["left"],
+      "duration_array": [30]
+    },
+    "step left": {
+      "description": "move left a little take a small step backwards step back",
+      "button_array": ["left"],
+      "duration_array": [5]
+    },
+    "step right": {
+      "description": "move left a little take a small step backwards step back",
+      "button_array": ["left"],
+      "duration_array": [5]
     },
     "move right": {
       "description": "move right forwards go right advance proceed",
-      "button": "right",
-      "mode": "once",
-      "duration": 30
+      "button_array": ["right"],
+      "duration_array": [30]
     },
     "track": {
       "description": "going to an enemy's location follow chase pursue target",
-      "button": "E",
-      "mode": "once",
-      "duration": null
+      "button_array": ["E"],
+      "duration_array": [null]
     },
     "fireball": {
       "description": "shoot a pellet of fire throw fireball",
-      "button": "F",
-      "mode": "once",
-      "duration": 5
+      "button_array": ["F"],
+      "duration_array": [5]
     },
     "duck": {
       "description": "duck or crouch down or get into a pipe",
-      "button": "S",
-      "mode": "once",
-      "duration": 10
+      "button_array": ["S"],
+      "duration_array": [10]
     },
     "run left": {
       "description": "run left sprint left hold left sustain left",
-      "button": "left",
-      "modifier": "B",
-      "mode": "hold",
-      "duration": null
+      "button_array": ["left"],
+      "duration_array": [null]
     },
     "run right": {
       "description": "run right sprint right hold right sustain right",
-      "button": "right",
-      "modifier": "B",
-      "mode": "hold",
-      "duration": null
+      "button_array": ["right"],
+      "duration_array": [null]
     },
     "hold left": {
       "description": "hold left go back keep sustained maintain constant",
-      "button": "left",
-      "mode": "hold",
-      "duration": null
+      "button_array": ["left"],
+      "duration_array": [null]
     },
     "hold right": {
       "description": "hold right go forward keep sustained maintain constant",
-      "button": "right",
-      "mode": "hold",
-      "duration": null
-    },
-    "mash jump": {
-      "description": "mash jump repeatedly spam tap hit many times attack spam",
-      "button": "A",
-      "mode": "mash",
-      "duration": null
-    },
-    "mash fireball": {
-      "description": "mash punch repeatedly spam tap hit many times attack spam fireball",
-      "button": "B",
-      "mode": "mash",
-      "duration": null
+      "button_array": ["right"],
+      "duration_array": [null]
     },
     "stop": {
       "description": "stop cease halt end quit finish cancel pause done",
-      "button": "",
-      "mode": "stop",
-      "duration": null
+      "button_array": [""],
+      "duration_array": [null]
     }
   },
   "environment": {

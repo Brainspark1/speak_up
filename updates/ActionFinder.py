@@ -33,7 +33,6 @@ class ActionFinder:
             direction = "left"
 
         return {
-            "direction": direction,
             "buttons": [direction, jump_button],
             "hold_frames": full_jump_duration,
         }

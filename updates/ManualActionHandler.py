@@ -17,6 +17,7 @@ import mlx_whisper
 import logging
 
 from NESVoiceController import NESVoiceController
+from SemanticMapper import SemanticMapper
 
 logger = logging.getLogger("ActionHandler")
 
@@ -61,6 +62,7 @@ class ManualActionHandler(NESVoiceController):
             0,
             0,
         ]  # b, a, mode, start, up, down, left, right
+
         self.button2id = {
             "b": 0,
             "a": 1,

@@ -1,24 +1,12 @@
-import io
 import json
-import logging
-import threading
-import time
-import wave
-
-import cv2
-import numpy as np
-import pynput
-import pyaudio
-import sklearn
-import transformers
-
-import faster_whisper
-import mlx_whisper
 import logging
 
 from NESVoiceController import NESVoiceController
 
-logger = logging.getLogger("ActionHandler")
+logger = logging.getLogger("ManualActionHandler")
+
+# if null, set to this large value
+HOLD_FRAMES = 999999
 
 
 class ManualActionHandler(NESVoiceController):
@@ -53,11 +41,10 @@ class ManualActionHandler(NESVoiceController):
             "right": 7,
         }
 
-    def process_game_commands(self, entities, actions_array):
+    def process_game_commands(self, entities):
         if not entities:
             return
 
-        # combining found entities from NESBERT into single sentence
         target_words = [
             entity.get("word", "").strip().lower()
             for entity in entities
@@ -70,6 +57,7 @@ class ManualActionHandler(NESVoiceController):
             if entity.get("entity_group") == "ACTION"
         ]
 
+        # handing off to AutoTracking class to set the target, runs each frame of main loop
         if target_words:
             sentence = " ".join(target_words)
 
@@ -77,7 +65,7 @@ class ManualActionHandler(NESVoiceController):
                 sentence = sentence.replace("#", "").replace(" ", "")
             logger.info(f"Target command received: {sentence}")
 
-            name, score = self.auto_tracking_class.set_target_from_similarity(sentence)
+            name, score = self.auto_tracking_class.activate_set_target(sentence)
 
             if name:
                 logger.info(f"Tracking started on {name} with confidence {score:.2f}")
@@ -86,22 +74,23 @@ class ManualActionHandler(NESVoiceController):
 
             return
 
+        # resolving into simple button hold via SemanticMapper
         if action_words:
             action_sentence = " ".join(action_words)
 
             if "##" in action_sentence:
                 action_sentence = action_sentence.replace("#", "").replace(" ", "")
 
-            logger.info(f"Action command received in {action_sentence}")
+            logger.info(f"Action command received: {action_sentence}")
 
             action_name, score = self.set_action_from_similarity(action_sentence)
 
             if not action_name or score < 0.15:
-                logger.info(f"No action recgonized in {action_sentence}")
+                logger.info(f"No action recognized in {action_sentence}")
 
                 return
 
-            if action_name.lower() == "stop":
+            if action_name.lower() in ["stop", "cancel"]:
                 logger.info("Stop command received")
                 self.duration_array = [0, 0, 0, 0, 0, 0, 0, 0]
                 self.auto_tracking_class.deactivate_tracking()
@@ -117,46 +106,23 @@ class ManualActionHandler(NESVoiceController):
 
                 return
 
+            # loop to return duration array indexed by buttons - generated via autocomplete
             for i, button in enumerate(buttons):
                 index = self.button2id.get(button.lower())
 
-                if index is not None:
+                if index is None:
+                    continue
+
+                # current duration is the current duration of the button slot number being looked at if we haven't reached the end of the duration array
+                if i < len(durations):
                     duration = durations[i]
+                else:
+                    duration = None  # assuming that if no duration found at this current index, button should be held until manually stopped
 
-        # else:
-        #     if action_words:
-        #         action_sentence = " ".join(action_words)
-
-        #         if "##" in action_sentence:
-        #             action_sentence = action_sentence.replace("#", "").replace(" ", "")
-
-        #         logger.info(f"Passing action to semantic mapper: {action_sentence}")
-
-        #         action_name, score = self.set_action_from_similarity(action_sentence)
-
-        #         if action_name:
-        #             if action_name.lower() == "stop":
-        #                 logger.info(
-        #                     "Stop command received, cancelling all mode actions"
-        #                 )
-        #                 self.auto_tracking_class.deactivate()
-
-        #                 return
-
-        #             action_duration = self.action_duration_lookup[action_name]
-        #             action_buttons = self.action_button_lookup[action_name]
-
-        #             for button in action_buttons:
-        #                 self.duration_array[self.button2id[button]] = action_duration
-        #                 actions_array[self.button2id[button]] = 1
-
-        #             print(f"Resolved action: '{action_name}' (confidence: {score:.2f})")
-        #         else:
-        #             print(f"Could not resolve action from: {action_sentence}")
-
-        #         self.action_array = actions_array
-
-        #         return
+                if duration is not None:
+                    self.duration_array[index] = duration
+                else:
+                    self.duration_array[index] = HOLD_FRAMES
 
     def set_action_from_similarity(self, transcript_sentence, min_confidence=0.2):
         name, score = self.semantic_mapper.find_max_action_similarity(

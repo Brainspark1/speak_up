@@ -9,7 +9,7 @@
       "address": "0x06",
       "description": "Short, ground-dwelling brown creature with a scowling face and triangular white eyes - goomba",
       "tracking": {
-          "track_distance": 22,
+          "track_distance": 45,
           "action": "jump"
       }
     },
@@ -57,7 +57,7 @@
       "address": "0x00",
       "description": "Bipedal yellow turtle with a prominent green shell, large head, and oval eyes - koopa green koopa",
       "tracking": {
-          "track_distance": 22,
+          "track_distance": 45,
           "action": "jump"
       }
     },

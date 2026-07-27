@@ -160,7 +160,7 @@
     "jump": {
       "description": "jump hop leap bounce spring vault rise up",
       "button_array": ["A"],
-      "duration_array": [8],
+      "duration_array": [30],
       "succession": "False"
     },
     "run": {
@@ -172,25 +172,25 @@
     "move left": {
       "description": "move left backwards go left back retreat",
       "button_array": ["left"],
-      "duration_array": [30],
+      "duration_array": [35],
       "succession": "False"
     },
     "step left": {
       "description": "move left a little take a small step backwards step back",
       "button_array": ["left"],
-      "duration_array": [5],
+      "duration_array": [15],
       "succession": "False"
     },
     "step right": {
       "description": "move right a little take a small step forward step ahead",
       "button_array": ["right"],
-      "duration_array": [5],
+      "duration_array": [15],
       "succession": "False"
     },
     "move right": {
       "description": "move right forwards go right advance proceed",
       "button_array": ["right"],
-      "duration_array": [30],
+      "duration_array": [35],
       "succession": "False"
     },
     "track": {
@@ -212,16 +212,16 @@
       "succession": "False"
     },
     "run left": {
-      "description": "run left sprint left hold left sustain left",
-      "button_array": ["left"],
-      "duration_array": [null],
-      "succession": "False"
+        "description": "run left sprint left dash fast",
+        "button_array": ["left"],
+        "duration_array": [null],
+        "succession": "False"
     },
     "run right": {
-      "description": "run right sprint right hold right sustain right",
-      "button_array": ["right"],
-      "duration_array": [null],
-      "succession": "False"
+        "description": "run right sprint right dash fast",
+        "button_array": ["right"],
+        "duration_array": [null],
+        "succession": "False"
     },
     "hold left": {
       "description": "hold left go back keep sustained maintain constant",

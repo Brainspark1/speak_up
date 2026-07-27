@@ -147,7 +147,9 @@ class AutoTracking:
     # method to get positions of mario and enemy from memory
     def get_game_positions(self, env):
         # accessing raw ram bytes for environment (2048 bytes array for nes games)
-        ram = env.unwrapped.ram
+        ram = env.unwrapped.get_ram()
+
+        # print(type(env.unwrapped), env.unwrapped.get_ram())
 
         # page on which mario currently is at (width of 256 pixels)
         character_x_page = int(ram[self.character_absolute_page_number])
@@ -202,7 +204,7 @@ class AutoTracking:
 
     # method to get the horizontal and vertical distances between mario and enemies
     def get_distances_to_targets(self, env, positions):
-        ram = env.unwrapped.ram
+        ram = env.unwrapped.get_ram()
 
         # dictionary to hold distance metrics for every active enemy found on screen
         enemy_metrics = []

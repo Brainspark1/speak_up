@@ -1,4 +1,5 @@
 import sys
+import logging
 
 import stable_retro as retro
 import pygame
@@ -6,6 +7,11 @@ import pygame
 from AutoTracking import AutoTracking
 from ManualActionHandler import ManualActionHandler
 from TrackingActionHandler import TrackingActionHandler
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+)
 
 # Initialize Pygame to handle window rendering and keyboard input
 pygame.init()
@@ -39,6 +45,7 @@ tracking_action_handler = TrackingActionHandler(
 stop_listening = manual_action_handler.start_listening()
 
 obs, info = env.reset()
+obs, reward, terminated, truncated, info = env.step([0, 0, 0, 0, 0, 0, 0, 0, 0])
 
 SCREEN_SCALE = 3
 screen_width = obs.shape[1] * SCREEN_SCALE
@@ -64,9 +71,9 @@ while running:
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             running = False
 
-    # blank NES controller array: [B, A, MODE, START, UP, DOWN, LEFT, RIGHT]
+    # blank NES controller array: [B, None, MODE, START, UP, DOWN, LEFT, RIGHT, A]
     # All buttons default to False (0)
-    action = [0, 0, 0, 0, 0, 0, 0, 0]
+    action = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     # voice actions start live here, being set and decremented in duration each frame
     duration = manual_action_handler.get_duration_array()
@@ -92,8 +99,8 @@ while running:
     if keys[pygame.K_SPACE]:
         action[1] = 1  # A
 
-    # counting down durations for each button in 8 slots
-    for i in range(8):
+    # counting down durations for each button in 9 slots
+    for i in range(9):
         if duration[i] > 0:  # if time still left on action
             action[i] = 1  # continue pressing button/index = 1
             duration[i] -= 1  # decrease duration by one

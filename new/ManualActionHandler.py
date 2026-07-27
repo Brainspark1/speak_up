@@ -28,17 +28,17 @@ class ManualActionHandler(NESVoiceController):
         self.data = self.read_json_file(mapping_json_path)
         self.auto_tracking_class = auto_tracking_class
 
-        self.duration_array = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.duration_array = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         self.button2id = {
             "b": 0,
-            "a": 1,
             "mode": 2,
             "start": 3,
             "up": 4,
             "down": 5,
             "left": 6,
             "right": 7,
+            "a": 8,
         }
 
     def process_game_commands(self, entities):
@@ -85,14 +85,16 @@ class ManualActionHandler(NESVoiceController):
 
             action_name, score = self.set_action_from_similarity(action_sentence)
 
+            logger.info(f"Resolved action: {action_name} (score={score:.3f})")
+
             if not action_name or score < 0.15:
                 logger.info(f"No action recognized in {action_sentence}")
 
                 return
 
-            if action_name.lower() in ["stop", "cancel"]:
+            if action_name.lower() == "stop" or action_name.lower() == "cancel":
                 logger.info("Stop command received")
-                self.duration_array = [0, 0, 0, 0, 0, 0, 0, 0]
+                self.duration_array = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                 self.auto_tracking_class.deactivate_tracking()
 
                 return
@@ -123,6 +125,8 @@ class ManualActionHandler(NESVoiceController):
                     self.duration_array[index] = duration
                 else:
                     self.duration_array[index] = HOLD_FRAMES
+
+            logger.info(f"Duration array after update: {self.duration_array}")
 
     def set_action_from_similarity(self, transcript_sentence, min_confidence=0.2):
         name, score = self.semantic_mapper.find_max_action_similarity(

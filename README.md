@@ -1,36 +1,25 @@
-# Macroroni
+# Voice Speak Up
 
 ## Description
-Our model utilizes MacBERT to extract user intent from live OpenAI Whisper transcriptions, translating speech into executable macro commands for a variety of fields, like controlling a Mario emulator. This novel pipeline bridges the gaps between GUI and VUI, featuring a novel memory layer that resolves live transcription boundaries and allows for real-time command corrections.
+voice_speak_up is a Python library targeted towards developers with the purpose of granting them the ability to more seamlessly integrate Voice-Controlled User Interfaces (VUIs) into their existing Graphical User Interface (GUI).
 
-#### Library Link: [https://pypi.org/project/macroroni/](https://pypi.org/project/macroroni/)
-#### Model Link: [Saggarwal/token_bert](https://huggingface.co/Saggarwal/token_bert)
+The library aims to provide a robust pipeline that allows users to utilize GAMEBERT, a BERT machine learning model trained on highly generic video game commands and terminology following the generic formula, “character, do action on target with item,” enabling developers to only be required to pass in single JSON file specifying RAM addresses for each character, action, item and target in a game to each existing element. 
+
+We have also included a correction classification layer within GAMEBERT that devs can utilize if needed for their VUI.
+
+To install and get started with voice_speak_up, simply run in terminal:
+
+```bash
+pip install voice-speak-up
+```
+
+
+#### Library Link: [https://pypi.org/project/voice-speak-up/](https://pypi.org/project/voice-speak-up/)
+#### Model Link: [Saggarwal/GAMEBERT](https://huggingface.co/Saggarwal/GAMEBERT)
 ## Contributors
 - Nihaal Garud
 - Sarthak Aggarwal
 - Joshua Lopez
 - Harshad Goswami
 
-## Sources Used
-| Link                                                                                                                                                                                                                             | Purpose                                                                                        | Person  |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ------- |
-| [https://stackoverflow.com/questions/265960/best-way-to-strip-punctuation-from-a-string](https://stackoverflow.com/questions/265960/best-way-to-strip-punctuation-from-a-string)                                                 | Removing punctuation from string                                                               | Nihaal  |
-| [https://machinelearningmastery.com/save-load-machine-learning-models-python-scikit-learn/](https://machinelearningmastery.com/save-load-machine-learning-models-python-scikit-learn/)                                           | Saving model weights                                                                           | Nihaal  |
-| [https://github.com/openai/whisper](https://github.com/openai/whisper)                                                                                                                                                           | Whisper usage                                                                                  | Nihaal  |
-| [https://www.geeksforgeeks.org/machine-learning/understanding-tf-idf-term-frequency-inverse-document-frequency/](https://www.geeksforgeeks.org/machine-learning/understanding-tf-idf-term-frequency-inverse-document-frequency/) | Using TF-IDF vectorizers                                                                       | Nihaal  |
-|https://www.kaggle.com/code/neilanshchauhan/multi-label-text-classification-using-distilbert                           | Kaggle Notebook for understanding how to code a distilbert for multi-label text classification | Sarthak |
-|https://github.com/SimGus/Chatette?tab=readme-ov-file    | Used for creating dataset for NLP Bert model.                                                  | Sarthak |
-|https://github.com/Kautenja/nes-py                   | Used to make emulator for Super Mario Bros                                                     | Joshua  |
-| https://pypi.org/project/pynput/                                                                                                                                                                                                 | Used for initial mapping of the game controls                                                  | Joshua  |
-| https://www.geeksforgeeks.org/computer-vision/essential-opencv-functions-to-get-started-into-computer-vision/                                                                                                                    | Used to render and resize the display for the emulator                                         | Joshua  |
-| https://agombert.github.io/AdvancedNLPClasses/chapter3/Session_3_1_Word2Vec_Training/                                                                                                                                            | Vectorizer code largely based off this article                                                 | Nihaal  |
-| https://gymnasium.farama.org/introduction/migration_guide/                                                                                                                                                                       | Used for more gym environment code in emulator                                                 | Joshua  |
-| https://github.com/SYSTRAN/faster-whisper                                                                                                                                                                                        | Documentation on implementing faster whisper syntax                                            | Nihaal  |
-| https://stackoverflow.com/questions/54174160/how-to-get-numpy-arrays-output-of-wav-file-format                                                                                                                                   | Ways to save audio to much faster numpy array                                                  | Nihaal  |
-| https://huggingface.co/docs/transformers/en/tasks/token_classification                                                                                                                                                           | Token by Token BERT                                                                            | Sarthak |
-| Claude                                                                                                                                                                                                                           | CSS                                                                                            | Harshad |
-| https://discuss.huggingface.co/t/token-classification-how-to-tokenize-and-align-labels-with-overflow-and-stride/4353                                                                                                             | Classify the tokens and labels                                                                 | Harshad |
-
- 
-
-                                                
+#### Sources Used: [https://docs.google.com/document/d/1cd7PCkatlefb_9DGq6SDzNG8A8YLyz7AKGU2WP7HmGI/edit?tab=t.0](https://docs.google.com/document/d/1cd7PCkatlefb_9DGq6SDzNG8A8YLyz7AKGU2WP7HmGI/edit?usp=sharing)

@@ -12,7 +12,7 @@ To install and get started with speak_up, simply run in terminal:
 ```bash
 pip install voice-speak-up
 ```
-
+     
 
 #### Library Link: [https://pypi.org/project/voice-speak-up/](https://pypi.org/project/voice-speak-up/)
 #### Model Link: [Saggarwal/GAMEBERT](https://huggingface.co/Saggarwal/GAMEBERT)

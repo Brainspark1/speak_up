@@ -1,13 +1,13 @@
-# Voice Speak Up
+# Speak Up
 
 ## Description
-voice_speak_up is a Python library targeted towards developers with the purpose of granting them the ability to more seamlessly integrate Voice-Controlled User Interfaces (VUIs) into their existing Graphical User Interface (GUI).
+speak_up is a Python library targeted towards developers with the purpose of granting them the ability to more seamlessly integrate Voice-Controlled User Interfaces (VUIs) into their existing Graphical User Interface (GUI).
 
 The library aims to provide a robust pipeline that allows users to utilize GAMEBERT, a BERT machine learning model trained on highly generic video game commands and terminology following the generic formula, “character, do action on target with item,” enabling developers to only be required to pass in single JSON file specifying RAM addresses for each character, action, item and target in a game to each existing element. 
 
 We have also included a correction classification layer within GAMEBERT that devs can utilize if needed for their VUI.
 
-To install and get started with voice_speak_up, simply run in terminal:
+To install and get started with speak_up, simply run in terminal:
 
 ```bash
 pip install voice-speak-up

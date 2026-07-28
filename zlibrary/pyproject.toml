@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voice-speak-up"
+version = "1.0.1"
+readme = "README.md"
+authors = [
+    { name="NLPBros", email="brainsparkteam@gmail.com" }
+]
+description = "A seamless 3-step pipeline to add voice-controlled support to many fields."
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "numpy",
+    "opencv_python",
+    "pandas",
+    "scikit-learn",
+    "SpeechRecognition",
+    "mlx_whisper",
+    "torch",
+    "transformers",
+    "evaluate",
+    "datasets",
+    "faster_whisper",
+    "stable_retro",
+    "pygame"
+]
+
+[project.urls]
+Homepage = "https://github.com/Brainspark1/speak_up.git"
+
+[tool.setuptools.packages.find]
+where = ["."]

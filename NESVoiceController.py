@@ -45,13 +45,13 @@ class NESVoiceController:
         self.semantic_mapper = SemanticMapper(mapping_json_path)
 
         # initializing transcription and ner pipelines
-        self._init_transcription_engine(whisper_model_size)
-        self._init_ner_pipeline("Saggarwal/NESBERT")  # passing in bert model
+        self.initialize_transcription_models(whisper_model_size)
+        self.initialize_model_pipeline("Saggarwal/NESBERT")  # passing in bert model
 
         # setting up classes to capture audio
         self.recognizer = sr.Recognizer()
         self.mic = sr.Microphone(sample_rate=16000)  # fixed recording rate at 16 kHz
-        self._calibrate_mic()
+        self.calibrate_microphone()
 
     # method to load and parse the json file that maps objects to memory addresses
     def load_game_mappings(self, json_path):
@@ -67,7 +67,7 @@ class NESVoiceController:
             self.game_mappings = {}
 
     # method to initialize the tokenizer and model pipeline with the passed in model path (Saggarwal/token_bert before sarthak builds the next bert)
-    def _init_ner_pipeline(self, model_path):
+    def initialize_model_pipeline(self, model_path):
         logger.info(f"Loading NESBERT Token Classification Model from: {model_path}")
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
@@ -96,7 +96,7 @@ class NESVoiceController:
         )
 
     # method to set up whisper engine based on hardware availability
-    def _init_transcription_engine(self, model_size):
+    def initialize_transcription_models(self, model_size):
         if self.device_backend == "mps":
             try:
                 import mlx_whisper
@@ -135,7 +135,7 @@ class NESVoiceController:
             )
 
     # method to calibrate microphone based on background noise
-    def _calibrate_mic(self, duration=2):
+    def calibrate_microphone(self, duration=2):
         with self.mic as source:
             logger.info("Calibrating microphone for ambient background noise...")
 

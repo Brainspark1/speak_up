@@ -17,9 +17,9 @@ pip install voice-speak-up
 #### Library Link: [https://pypi.org/project/voice-speak-up/](https://pypi.org/project/voice-speak-up/)
 #### Model Link: [Saggarwal/GAMEBERT](https://huggingface.co/Saggarwal/GAMEBERT)
 ## Contributors
-- Nihaal Garud
-- Sarthak Aggarwal
-- Joshua Lopez
-- Harshad Goswami
+- Nihaal Garud (Brainspark1)
+- Sarthak Aggarwal (Saggerwal-2025)
+- Joshua Lopez (JLopez117)
+- Harshad Goswami (harshalvg19-ctrl)
 
 #### Sources Used: [https://docs.google.com/document/d/1cd7PCkatlefb_9DGq6SDzNG8A8YLyz7AKGU2WP7HmGI/edit?tab=t.0](https://docs.google.com/document/d/1cd7PCkatlefb_9DGq6SDzNG8A8YLyz7AKGU2WP7HmGI/edit?usp=sharing)

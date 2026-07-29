@@ -2,13 +2,6 @@ import React, { useState } from "react";
 import { getClassifier } from "../lib/classifier.js";
 import "./Playground.css";
 
-// Real label scheme, taken directly from config.json's id2label:
-// O, B-ACTION/I-ACTION, B-TARGET/I-TARGET, B-CORRECTION/I-CORRECTION.
-// There is no DIRECTION category — movement words like "left"/"right"
-// aren't tagged by GAMEBERT itself under this scheme; only verbs (ACTION)
-// and the things they act on (TARGET) are. CORRECTION marks a mid-phrase
-// self-correction, which is what the correction layer described in the
-// docs acts on — this demo surfaces it but doesn't simulate that logic.
 const ACTION_COMMANDS = {
   jump: "A",
   hop: "A",
@@ -22,6 +15,7 @@ const ACTION_COMMANDS = {
 };
 
 function actionToCommand(word) {
+  if (!word) return null;
   return ACTION_COMMANDS[word.toLowerCase().replace(/^##/, "")] || null;
 }
 
@@ -35,7 +29,6 @@ const EXAMPLES = [
 
 function Playground() {
   const [text, setText] = useState(EXAMPLES[0]);
-  // idle | loading-model | ready | classifying | error
   const [status, setStatus] = useState("idle");
   const [progress, setProgress] = useState(null);
   const [entities, setEntities] = useState([]);
@@ -55,8 +48,13 @@ function Playground() {
       });
 
       setStatus("classifying");
+      
+      // Standard token classification step
       const result = await classifier(text, { aggregation_strategy: "simple" });
-      setEntities(result);
+      
+      // Force result into an array format to ensure state array mutations work
+      const safeResults = Array.isArray(result) ? result : [result];
+      setEntities(safeResults);
       setStatus("ready");
     } catch (err) {
       console.error(err);
@@ -68,21 +66,19 @@ function Playground() {
     }
   }
 
-  const actionEntities = entities.filter((e) => e.entity_group === "ACTION");
-  const targetEntities = entities.filter((e) => e.entity_group === "TARGET");
-  const correctionEntities = entities.filter((e) => e.entity_group === "CORRECTION");
+  // Safe checks for properties if the model returns slightly altered labels
+  const actionEntities = entities.filter((e) => e && (e.entity_group === "ACTION" || e.entity === "ACTION"));
+  const targetEntities = entities.filter((e) => e && (e.entity_group === "TARGET" || e.entity === "TARGET"));
+  const correctionEntities = entities.filter((e) => e && (e.entity_group === "CORRECTION" || e.entity === "CORRECTION"));
 
-  // Walk entities in the order they appear in the sentence (not the
-  // pre-filtered lists above) so a CORRECTION can cancel the ACTION that
-  // came right before it. This is what makes "jump — no, duck" resolve to
-  // DOWN alone instead of both A and DOWN — the model tags the correction,
-  // this is where that tag actually gets used rather than just displayed.
   const commands = [];
   for (const e of entities) {
-    if (e.entity_group === "ACTION") {
+    if (!e) continue;
+    const currentGroup = e.entity_group || e.entity;
+    if (currentGroup === "ACTION") {
       const cmd = actionToCommand(e.word);
       if (cmd) commands.push(cmd);
-    } else if (e.entity_group === "CORRECTION") {
+    } else if (currentGroup === "CORRECTION") {
       commands.pop();
     }
   }
@@ -99,9 +95,7 @@ function Playground() {
           server, no API key. It tags <strong>ACTION</strong> words (verbs),{" "}
           <strong>TARGET</strong> words (what the action applies to), and{" "}
           <strong>CORRECTION</strong> words (a player correcting themselves
-          mid-phrase). A correction cancels the action right before it, try
-          "jump — no, duck" below. TARGET isn't mapped to a controller macro
-          yet, since that needs your game's specific mapping file.
+          mid-phrase).
         </p>
       </div>
 
@@ -147,8 +141,7 @@ function Playground() {
         <div className="playground__output panel">
           {status === "idle" && (
             <p className="sp-waiting-muted">
-              Type something and hit "Run classification." The first run
-              downloads the model — later runs are instant.
+              Type something and hit "Run classification."
             </p>
           )}
 
@@ -164,7 +157,7 @@ function Playground() {
                   )}
                   {actionEntities.map((e, i) => (
                     <span className="chip chip--matched" key={i}>
-                      {e.word} ({(e.score * 100).toFixed(0)}%)
+                      {e.word} ({((e.score || 0) * 100).toFixed(0)}%)
                     </span>
                   ))}
                 </div>
@@ -178,7 +171,7 @@ function Playground() {
                   )}
                   {targetEntities.map((e, i) => (
                     <span className="chip" key={i}>
-                      {e.word} ({(e.score * 100).toFixed(0)}%)
+                      {e.word} ({((e.score || 0) * 100).toFixed(0)}%)
                     </span>
                   ))}
                 </div>
@@ -192,7 +185,7 @@ function Playground() {
                   )}
                   {correctionEntities.map((e, i) => (
                     <span className="chip chip--correction" key={i}>
-                      {e.word} ({(e.score * 100).toFixed(0)}%)
+                      {e.word} ({((e.score || 0) * 100).toFixed(0)}%)
                     </span>
                   ))}
                 </div>
@@ -213,11 +206,6 @@ function Playground() {
               </div>
             </>
           )}
-
-          <p className="playground__hint">
-            Recognized action words: jump/hop, shoot/fire, duck/crouch,
-            eat/swallow.
-          </p>
         </div>
       </div>
     </div>

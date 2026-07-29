@@ -146,7 +146,9 @@ class AutoTracking:
         # checking every other enemy from index 1 to the end of the list
         for enemy in enemy_profiles[1:]:
             # getting corresponding time to collision
-            enemy_time = enemy.get("time_to_collision_frames", float("inf"))
+            enemy_time = enemy.get(
+                "time_to_collision_frames", float("inf")
+            )  # defaulting to infinite frames until collision to prevent any future crashes
 
             # if new enemy time is less than closest found time yet, set enemy and time values accordingly
             if enemy_time < closest_time:
@@ -158,7 +160,6 @@ class AutoTracking:
 
     # method to get positions of mario and enemy from memory
     def get_game_positions(self, env):
-        # accessing raw ram bytes for environment (2048 bytes array for nes games)
         ram = env.unwrapped.get_ram()
 
         # print(type(env.unwrapped), env.unwrapped.get_ram())
@@ -236,21 +237,25 @@ class AutoTracking:
             # finding distance using pythagorean theorem
             distance = (horizontal_distance**2 + vertical_distance**2) ** 0.5
 
-            raw_speed_byte = int(
+            enemy_raw_speed_byte = int(
                 ram[self.enemy_horizontal_velocity + enemy["slot"]]
-            )  # cast to a standard python int right away
+            )
 
-            # determining actual direction of enemy by checking if the memory byte is signed as negative (going left) or as positive (going right)
-            # if byte raw value is above 128/represents negative values/moving left in nes ...
-            if raw_speed_byte > 128:
-                enemy_direction = "left"
+            # raw speed byte idea fine-tuned with AI autocomplete
+            # raw speed byte is able to hold direction and speed in same value, where 129-255 = left and 0-128 = right, where higher values in each range = speed
+
+            # if byte raw value is above 128/represents negative values/moving left
+            if enemy_raw_speed_byte > 128:
+                enemy_direction = "left"  # set direction
                 enemy_speed = abs(
-                    256 - raw_speed_byte
-                )  # representing negative values as difference between actual negative value and 256 (unable to represent negative values without taking up important ram space)
-            # if byte raw value is below 128/represents positive values/moving right in nes ...
+                    256
+                    - enemy_raw_speed_byte  # the speed of the enemy then must be 256 - enemy's raw speed byte, using Two's Complement system - negative values stored in this range to prevent using extra space to hold the sign
+                )
+
+            # if byte raw value is below 128/represents positive values/moving right
             else:
-                enemy_direction = "right"
-                enemy_speed = raw_speed_byte
+                enemy_direction = "right"  # set direction
+                enemy_speed = enemy_raw_speed_byte  # speed of enemy is just the raw speed byte - no need for Two's Complement trick, as not negative values/direction is right
 
             # fallback safety check to avoid any zero division errors if an enemy is momentarily stationary
             if enemy_speed == 0:

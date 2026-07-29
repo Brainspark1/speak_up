@@ -15,7 +15,7 @@ function Header() {
     <header className="site-header">
       <div className="container site-header__row">
         <NavLink to="/" className="brand" onClick={() => setOpen(false)}>
-        <img src="image.png" className="brand__mark" alt="Brand Logo" style={{ width: '24px', height: 'auto' }} />
+        <img src="/image.png" className="brand__mark" alt="Brand Logo" style={{ width: '24px', height: 'auto' }} />
           <span className="brand__name">Speak Up</span>
         </NavLink>
 

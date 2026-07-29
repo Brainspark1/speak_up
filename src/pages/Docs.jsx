@@ -32,7 +32,7 @@ function Docs() {
               the formula "character, do action on target with item." Rather
               than training a model per game, you supply a single JSON file
               mapping RAM addresses to your game's characters, actions,
-              items, and targets — Speak_Up handles the rest.
+              items, and targets —> Speak_Up handles the rest.
             </p>
             <p>
               Two layers sit on top of that core mapping: a{" "}
@@ -69,7 +69,7 @@ function Docs() {
               >
                 gym-super-mario-bros
               </a>
-              , but Speak_Up isn't specific to that library or that game —
+              , but Speak_Up isn't specific to that library or that game,
               any GUI-based NES emulator setup works the same way, as long
               as you can supply RAM addresses for it.
             </p>
@@ -81,7 +81,7 @@ function Docs() {
               This JSON file is what bridges what a player says and what
               your emulator can actually read in memory. You define the RAM
               addresses for your game's individual characters, actions,
-              items, and targets — Speak_Up does not infer these for you.
+              items, and targets —> Speak_Up does not infer these for you.
             </p>
             <p className="docs__note">
               Most RAM address information for NES games is documented on{" "}
@@ -95,7 +95,7 @@ function Docs() {
               .
             </p>
             <div className="docs__placeholder">
-              TODO — drop in the real <code>game_mappings.json</code> example
+              TODO: drop in the real <code>game_mappings.json</code> example
               for Super Mario Bros. here.
             </div>
           </section>
@@ -109,7 +109,7 @@ function Docs() {
               entities.
             </p>
             <div className="docs__placeholder">
-              TODO — drop in the real Super Mario Bros. pipeline
+              TODO: drop in the real Super Mario Bros. pipeline
               integration code here.
             </div>
           </section>
@@ -125,7 +125,7 @@ function Docs() {
                 >
                   Data Crystal
                 </a>{" "}
-                — RAM address documentation for most NES games
+                 RAM address documentation for most NES games
               </li>
               <li>
                 <a
@@ -135,7 +135,7 @@ function Docs() {
                 >
                   gym-super-mario-bros
                 </a>{" "}
-                — the emulator environment used in this guide's example
+                  the emulator environment used in this guide's example
               </li>
               <li>
                 <a

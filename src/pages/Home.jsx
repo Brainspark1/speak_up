@@ -26,7 +26,7 @@ function Home() {
             Speak_Up is a Python library that brings voice-controlled
             interfaces to GUI-based NES emulator games. Point it at a JSON
             file mapping your game's characters, actions, items, and
-            targets to RAM addresses — GAMEBERT, a BERT model trained on
+            targets to RAM addresses, GAMEBERT, a BERT model trained on
             generic game commands, handles the rest.
           </p>
           <div className="hero__actions">
@@ -49,7 +49,7 @@ function Home() {
           <h2>From spoken phrase to RAM write</h2>
           <p>
             GAMEBERT is trained on the generic formula "character, do action
-            on target with item" — your JSON mapping file is what makes that
+            on target with item". Your JSON mapping file is what makes that
             generic understanding specific to your game.
           </p>
         </div>
@@ -62,7 +62,7 @@ function Home() {
           <h2>Two layers most voice demos skip</h2>
           <p>
             A correction layer catches a player talking themselves into a
-            command mid-phrase — "jump — no, duck" resolves to one action,
+            command mid-phrase :  "jump, wait — no, duck" resolves to one action,
             not two. A semantic mapping layer means players can say "hop,"
             "leap," or "jump" and all three resolve to the same action you
             defined once in your JSON file.
@@ -76,7 +76,7 @@ function Home() {
           <h2>Built by four people, one summer</h2>
           <p>
             The Super Mario Bros. integration on this site is Speak_Up's
-            reference implementation — built with{" "}
+            reference implementation built with{" "}
             <a
               href="https://github.com/Kautenja/gym-super-mario-bros"
               target="_blank"

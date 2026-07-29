@@ -5,9 +5,9 @@ import os
 import stable_retro as retro
 import pygame
 
-from AutoTracking import AutoTracking
-from ManualActionHandler import ManualActionHandler
-from TrackingActionHandler import TrackingActionHandler
+from ..library_implementation.AutoTracking import AutoTracking
+from ..library_implementation.ManualActionHandler import ManualActionHandler
+from ..library_implementation.TrackingActionHandler import TrackingActionHandler
 
 logging.basicConfig(
     level=logging.INFO,
@@ -17,7 +17,7 @@ logging.basicConfig(
 # Initialize Pygame to handle window rendering and keyboard input
 pygame.init()
 
-JSON_CONFIG_PATH = "mario_config.json"
+JSON_CONFIG_PATH = "main/configs/mario_config.json"
 ENV_NAME = "SuperMarioBros-Nes-v0"
 
 try:
@@ -65,7 +65,7 @@ step_index = 0  # which step in sequence for succession mode
 step_remaining = 0  # frames left on current step for succession mode
 sustain_remaining = 0  # frames left for together mode
 
-BUTTON_INDICES = manual_action_handler.button_to_id_mapping
+BUTTON_INDICES = manual_action_handler.button_to_index_mapping
 
 while running:
     # Handles window close or escape key

@@ -9,12 +9,12 @@ import numpy as np
 import speech_recognition as sr
 from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 
-from SemanticMapper import SemanticMapper
+from ..library.SemanticMapper import SemanticMapper
 
 logger = logging.getLogger("nes_voice")
 
 
-class NESVoiceController:
+class VoiceController:
     def __init__(
         self,
         mapping_json_path,
@@ -43,7 +43,7 @@ class NESVoiceController:
         self.load_game_mappings(mapping_json_path)
 
         # semantic mapper used to resolve transcribed speech into targets/actions
-        # defined in the game-specific json config
+        # defined in the game-specific json config - entire point is to pass the json file to the semantic mapper, not using in this file
         self.semantic_mapper = SemanticMapper(mapping_json_path)
 
         # initializing transcription and ner pipelines
@@ -139,17 +139,26 @@ class NESVoiceController:
     # method to calibrate microphone based on background noise
     def calibrate_microphone(self, duration=2):
         with self.mic as source:
-            logger.info("Calibrating microphone for ambient background noise...")
+            logger.info("Adjusting for background noise for {duration} seconds...")
 
             self.recognizer.adjust_for_ambient_noise(source, duration=duration)
 
-    # method to store temporary wav file in numpy array to minimize latency
+    # method to store temporary wav file in 1D numpy array to minimize latency - taken from StackOverflow, fine-tuned with AI agent
     def audio_to_numpy(self, audio):
         wav_data = audio.get_wav_data()
+
         with wave.open(io.BytesIO(wav_data), "rb") as wav_file:
-            frames = wav_file.readframes(wav_file.getnframes())
-            audio_np = np.frombuffer(frames, dtype=np.int16).astype(np.float32)
-            audio_np = audio_np / 32768.0
+            frames = wav_file.readframes(
+                wav_file.getnframes()
+            )  # reading audio frames from the recording wav file
+
+            # reading every pairs of bytes of binary audio stream as int16 first as int16 can read 2 bytes at a time, then converting it to float32 to return a normalized range of values in the array from -1.0 to 1.0
+            audio_16 = np.frombuffer(frames, dtype=np.int16)
+            audio_np = audio_16.astype(np.float32)
+
+            audio_np = (
+                audio_np / 32768.0
+            )  # dividing by maximum value for signed 16-bit integer to normalize range of values in numpy array
 
         return audio_np
 
@@ -163,7 +172,7 @@ class NESVoiceController:
                 initial_prompt=self.initial_prompt,
             )
 
-            # returning text part of transcription
+            # returning text part of transcription, cleaning up spaces before and after to prevent noise
             return result["text"].strip()
 
         elif self.device_backend == "cuda":
@@ -186,11 +195,16 @@ class NESVoiceController:
         return self.nlp_pipeline(text)
 
     # method to combine all functions together to transcribe audio, extract entities and process game commands based on method user needs to implement in subclass
-    def audio_callback(self, audio):
+    def audio_callback(
+        self, recognizer, audio
+    ):  # recognizer included just to prevent error throwing in speech recognition package
         try:
-            start_time = time.time()
-            audio_np = self.audio_to_numpy(audio)
-            raw_text = self.transcribe_audio(audio_np)
+            start_time = time.time()  # to check for latency, current time
+
+            audio_np = self.audio_to_numpy(audio)  # converting audio to 1D numpy array
+            raw_text = self.transcribe_audio(
+                audio_np
+            )  # transcribing the audio calling on loaded whisper model
 
             if not raw_text or len(raw_text.split()) > 15:
                 return

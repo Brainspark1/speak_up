@@ -1,6 +1,6 @@
 import logging
 
-from SemanticMapper import SemanticMapper
+from ..library.SemanticMapper import SemanticMapper
 
 logger = logging.getLogger("AutoTracking")
 
@@ -13,7 +13,9 @@ class AutoTracking:
         self.item_data = self.data["items"]
         self.env_data = self.data["environment"]
 
-        self.semantic_mapper = SemanticMapper(json_path)
+        self.semantic_mapper = SemanticMapper(
+            json_path
+        )  # not using in this file, but called in others
 
         self.target_type_lookup = {
             name: int(

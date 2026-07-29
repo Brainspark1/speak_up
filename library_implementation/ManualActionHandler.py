@@ -1,7 +1,7 @@
 import json
 import logging
 
-from NESVoiceController import NESVoiceController
+from ..library.VoiceController import VoiceController
 
 logger = logging.getLogger("ManualActionHandler")
 
@@ -9,7 +9,7 @@ logger = logging.getLogger("ManualActionHandler")
 HOLD_FRAMES = 999999
 
 
-class ManualActionHandler(NESVoiceController):
+class ManualActionHandler(VoiceController):
     def __init__(
         self,
         mapping_json_path,
@@ -30,7 +30,7 @@ class ManualActionHandler(NESVoiceController):
 
         self.duration_array = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-        self.button_to_id_mapping = {
+        self.button_to_index_mapping = {
             "b": 0,
             "mode": 2,
             "start": 3,
@@ -45,10 +45,10 @@ class ManualActionHandler(NESVoiceController):
         self.target_data = self.data["targets"]
         self.names = []
 
-        for action_name in range(len(self.action_data)):
+        for action_name in self.action_data:
             self.names.append(action_name)
 
-        for target_name in range(len(self.target_data)):
+        for target_name in self.target_data:
             self.names.append(target_name)
 
         self.names_string = ", ".join(
@@ -141,7 +141,7 @@ class ManualActionHandler(NESVoiceController):
 
                 # loop to return duration array indexed by buttons - generated via autocomplete
                 for i, button in enumerate(buttons):
-                    index = self.button_to_id_mapping.get(button.lower())
+                    index = self.button_to_index_mapping.get(button.lower())
 
                     if index is None:
                         continue

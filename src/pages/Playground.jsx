@@ -95,11 +95,11 @@ function Playground() {
         <span className="eyebrow">playground</span>
         <h2>Type a command, see it classified</h2>
         <p>
-          This runs GAMEBERT entirely in your browser via ONNX Runtime — no
+          This runs GAMEBERT entirely in your browser via ONNX Runtime, no
           server, no API key. It tags <strong>ACTION</strong> words (verbs),{" "}
           <strong>TARGET</strong> words (what the action applies to), and{" "}
           <strong>CORRECTION</strong> words (a player correcting themselves
-          mid-phrase). A correction cancels the action right before it — try
+          mid-phrase). A correction cancels the action right before it, try
           "jump — no, duck" below. TARGET isn't mapped to a controller macro
           yet, since that needs your game's specific mapping file.
         </p>

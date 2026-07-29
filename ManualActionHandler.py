@@ -5,7 +5,7 @@ from NESVoiceController import NESVoiceController
 
 logger = logging.getLogger("ManualActionHandler")
 
-# if null, set to this large value
+# if null, set to this large value for holding
 HOLD_FRAMES = 999999
 
 
@@ -30,7 +30,7 @@ class ManualActionHandler(NESVoiceController):
 
         self.duration_array = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-        self.button2id = {
+        self.button_to_id_mapping = {
             "b": 0,
             "mode": 2,
             "start": 3,
@@ -51,9 +51,9 @@ class ManualActionHandler(NESVoiceController):
         for target_name in range(len(self.target_data)):
             self.names.append(target_name)
 
-        self.action_string = str(
-            self.names[1:-1]
-        )  # returns string of second value to last value, no [] included
+        self.names_string = ", ".join(
+            self.names
+        )  # returns string of all actions and targets in json file, separated by commas
 
     def process_game_commands(self, entities):
         if not entities:
@@ -141,7 +141,7 @@ class ManualActionHandler(NESVoiceController):
 
                 # loop to return duration array indexed by buttons - generated via autocomplete
                 for i, button in enumerate(buttons):
-                    index = self.button2id.get(button.lower())
+                    index = self.button_to_id_mapping.get(button.lower())
 
                     if index is None:
                         continue
@@ -152,6 +152,7 @@ class ManualActionHandler(NESVoiceController):
                     else:
                         duration = None  # assuming that if no duration found at this current index, button should be held until manually stopped
 
+                    # handling set duration values
                     if duration is not None:
                         self.duration_array[index] = duration
                     else:

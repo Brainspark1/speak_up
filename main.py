@@ -17,8 +17,8 @@ logging.basicConfig(
 # Initialize Pygame to handle window rendering and keyboard input
 pygame.init()
 
-JSON_CONFIG_PATH = "kirby_config.json"
-ENV_NAME = "KirbysAdventure-Nes-v0"
+JSON_CONFIG_PATH = "mario_config.json"
+ENV_NAME = "SuperMarioBros-Nes-v0"
 
 try:
     env = retro.make(game=ENV_NAME, state=retro.State.DEFAULT)
@@ -37,7 +37,7 @@ manual_action_handler = ManualActionHandler(
     whisper_model_size="tiny.en",
 )
 
-manual_action_handler.initial_prompt = f"Look out for words related to this game, especially {manual_action_handler.action_string}."
+manual_action_handler.initial_prompt = f"Look out for words related to this game, especially {manual_action_handler.names_string}."
 
 tracking_action_handler = TrackingActionHandler(
     env, JSON_CONFIG_PATH, auto_tracking_class
@@ -65,7 +65,7 @@ step_index = 0  # which step in sequence for succession mode
 step_remaining = 0  # frames left on current step for succession mode
 sustain_remaining = 0  # frames left for together mode
 
-BUTTON_INDICES = manual_action_handler.button2id
+BUTTON_INDICES = manual_action_handler.button_to_id_mapping
 
 while running:
     # Handles window close or escape key

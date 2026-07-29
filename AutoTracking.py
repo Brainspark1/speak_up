@@ -16,7 +16,9 @@ class AutoTracking:
         self.semantic_mapper = SemanticMapper(json_path)
 
         self.target_type_lookup = {
-            name: int(info["address"], 16)
+            name: int(
+                info["address"], 16
+            )  # 16 to interpret as base-sixteen/hexadecimal format
             for name, info in self.data["targets"].items()
             if name != "enemy"
         }
@@ -115,6 +117,8 @@ class AutoTracking:
         if score < min_confidence:
             self.target_type_address = None
             self.target_type_name = None
+
+            print("Not confident enough to identify target")
 
             return None, score
 

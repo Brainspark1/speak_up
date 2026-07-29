@@ -29,7 +29,9 @@ class NESVoiceController:
         :param initial_prompt: context prompt to guide Whisper transcriptions
         """
 
-        self.lock = threading.Lock()
+        self.lock = (
+            threading.Lock()
+        )  # prevents multiple threads from occurring simultaneously, allowing for actions to be completed fully for duration before next action is started
         self.device_backend = device_backend
         self.initial_prompt = (
             initial_prompt
@@ -46,7 +48,7 @@ class NESVoiceController:
 
         # initializing transcription and ner pipelines
         self.initialize_transcription_models(whisper_model_size)
-        self.initialize_model_pipeline("Saggarwal/NESBERT")  # passing in bert model
+        self.initialize_model_pipeline("Saggarwal/GAMEBERT")  # passing in bert model
 
         # setting up classes to capture audio
         self.recognizer = sr.Recognizer()
@@ -68,7 +70,7 @@ class NESVoiceController:
 
     # method to initialize the tokenizer and model pipeline with the passed in model path (Saggarwal/token_bert before sarthak builds the next bert)
     def initialize_model_pipeline(self, model_path):
-        logger.info(f"Loading NESBERT Token Classification Model from: {model_path}")
+        logger.info(f"Loading GAMEBERT Token Classification Model from: {model_path}")
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.model = AutoModelForTokenClassification.from_pretrained(model_path)
@@ -81,7 +83,7 @@ class NESVoiceController:
                 self.model = self.model.to("mps")
                 device_str = "mps"
             except Exception:
-                logger.warning("Failed to move NESBERT to MPS. Defaulting to CPU.")
+                logger.warning("Failed to move GAMEBERT to MPS. Defaulting to CPU.")
                 device_str = "cpu"
         else:
             device_str = "cpu"
@@ -174,7 +176,7 @@ class NESVoiceController:
             # joining collected segments together into transcribed sentence
             return "".join([segment.text for segment in segments]).strip()
 
-    # method to pass text through NESBERT pipeline to extract tags/entity names
+    # method to pass text through GAMEBERT pipeline to extract tags/entity names
     def extract_entities(self, text):
 
         # return nothing if no text to pass through the bert
@@ -183,7 +185,8 @@ class NESVoiceController:
 
         return self.nlp_pipeline(text)
 
-    def audio_callback(self, recognizer, audio):
+    # method to combine all functions together to transcribe audio, extract entities and process game commands based on method user needs to implement in subclass
+    def audio_callback(self, audio):
         try:
             start_time = time.time()
             audio_np = self.audio_to_numpy(audio)
@@ -196,7 +199,7 @@ class NESVoiceController:
             entities = self.extract_entities(raw_text)
 
             logger.info(
-                f"Transcript: '{raw_text}' | NER Tags: {entities} | Latency: {time.time() - start_time:.4f}s"
+                f"Transcript: {raw_text}, Tags: {entities}, Latency Time: {time.time() - start_time:.4f}s"
             )
 
             # if entities have been recognized, reference them with json mapping into memory adddresses for bert to use

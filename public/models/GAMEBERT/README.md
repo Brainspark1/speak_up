@@ -1,6 +1,6 @@
 # Model files
 
-These are the real, converted GAMEBERT model files — already in place,
+These are the real, converted GAMEBERT model files already in place,
 nothing to copy in manually:
 
 ```

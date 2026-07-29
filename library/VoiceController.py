@@ -158,7 +158,7 @@ class VoiceController:
 
             audio_np = (
                 audio_np / 32768.0
-            )  # dividing by maximum value for signed 16-bit integer to normalize range of values in numpy array
+            )  # dividing by maximum value for signed 16-bit integer (negative included) to normalize range of values in numpy array
 
         return audio_np
 

@@ -1,8 +1,5 @@
 import os
 
-for proxy_var in ["HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"]:
-    os.environ.pop(proxy_var, None)
-
 from transformers import DataCollatorForTokenClassification, AutoTokenizer
 
 tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
@@ -12,10 +9,14 @@ from datasets import load_from_disk
 from sklearn.model_selection import train_test_split
 from compute_metrics import compute_metrics
 
+# defining tokenizer, data_collator, importing in dataset
+
 tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
 data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
 ds = load_from_disk('../dataset/mario_token_classification_tokenized')
 split_ds = ds.train_test_split(test_size=0.2, seed=42)
+
+#providing label2id and id2label for model
 label2id = {
     "O": 0,
     "B-ACTION": 1,
@@ -34,6 +35,8 @@ id2label = {
     5: "B-CORRECTION",
     6: "I-CORRECTION",
 }
+
+# initializing huggingface model and trainer
 model = AutoModelForTokenClassification.from_pretrained(
     "google/bert_uncased_L-2_H-128_A-2",
     num_labels=len(label2id),

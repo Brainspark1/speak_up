@@ -3,6 +3,7 @@ import { getClassifier } from "../lib/classifier.js";
 import "./Playground.css";
 
 const ACTION_COMMANDS = {
+  // Movement Actions
   jump: "A",
   hop: "A",
   run: "B",
@@ -12,11 +13,22 @@ const ACTION_COMMANDS = {
   crouch: "DOWN",
   stop: "NEUTRAL",
   halt: "NEUTRAL",
+
+  // Chatette Data Models
+  kill: "B",
+  stomp: "A",
+  defeat: "B",
+  attack: "B",
+  eat: "SELECT",
+  swallow: "SELECT",
+  shoot: "B",
+  fire: "B"
 };
 
 function actionToCommand(word) {
   if (!word) return null;
-  return ACTION_COMMANDS[word.toLowerCase().replace(/^##/, "")] || null;
+  const cleanWord = word.toLowerCase().trim().replace(/^##/, "");
+  return ACTION_COMMANDS[cleanWord] || null;
 }
 
 const EXAMPLES = [
@@ -28,14 +40,15 @@ const EXAMPLES = [
 ];
 
 function Playground() {
+  // FIXED: Pulls the first string "jump" from the array instead of passing the whole array list
   const [text, setText] = useState(EXAMPLES[0]);
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState("idle"); 
   const [progress, setProgress] = useState(null);
   const [entities, setEntities] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
 
   async function runClassification() {
-    if (!text.trim()) return;
+    if (!text || !text.trim()) return;
 
     try {
       setStatus((s) => (s === "idle" ? "loading-model" : "classifying"));
@@ -48,13 +61,10 @@ function Playground() {
       });
 
       setStatus("classifying");
-      
-      // Standard token classification step
       const result = await classifier(text, { aggregation_strategy: "simple" });
       
-      // Force result into an array format to ensure state array mutations work
       const safeResults = Array.isArray(result) ? result : [result];
-      setEntities(safeResults);
+      setEntities(safeResults.filter(Boolean));
       setStatus("ready");
     } catch (err) {
       console.error(err);
@@ -66,7 +76,6 @@ function Playground() {
     }
   }
 
-  // Safe checks for properties if the model returns slightly altered labels
   const actionEntities = entities.filter((e) => e && (e.entity_group === "ACTION" || e.entity === "ACTION"));
   const targetEntities = entities.filter((e) => e && (e.entity_group === "TARGET" || e.entity === "TARGET"));
   const correctionEntities = entities.filter((e) => e && (e.entity_group === "CORRECTION" || e.entity === "CORRECTION"));

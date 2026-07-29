@@ -1,0 +1,189 @@
+/* ---------------------------------------------------------
+   Design tokens — "signal-path schematic"
+   Concept: nes_voice is a translator between two signal types
+   (voice -> controller input). That's an engineering problem,
+   so the visual language borrows from datasheets and blueprints
+   — not a terminal window, not a SaaS dashboard.
+--------------------------------------------------------- */
+:root {
+  --paper: #eef1ec;
+  --paper-raised: #e4e9e2;
+  --ink: #16324f;
+  --ink-soft: #4a6b85;
+  --line: rgba(22, 50, 79, 0.16);
+  --line-faint: rgba(22, 50, 79, 0.07);
+  --signal: #d4472c;    /* annotation red — commands, emphasis */
+  --confirm: #2e7d6b;   /* matched/recognized state */
+  --font-display: "Space Grotesk", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", -apple-system, sans-serif;
+  --font-data: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  --radius: 2px;
+  --max-width: 1080px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  /* Faint blueprint grid — a structural texture tied to the concept,
+     not decoration for its own sake. */
+  background-image:
+    linear-gradient(var(--line-faint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-faint) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+a {
+  color: var(--signal);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--ink);
+}
+
+code,
+pre {
+  font-family: var(--font-data);
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* A schematic-style field label: small caps, wide tracking, a leader
+   tick instead of a dot — reads like an annotation on a drawing. */
+.eyebrow {
+  font-family: var(--font-data);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  color: var(--signal);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 14px;
+  height: 1px;
+  background: var(--signal);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-primary {
+  background: var(--signal);
+  color: var(--paper);
+  border-color: var(--signal);
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--signal);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: transparent;
+  color: var(--ink-soft);
+}
+
+.panel {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.section {
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.section-head {
+  margin-bottom: 2.5rem;
+  max-width: 640px;
+}
+
+.section-head h2 {
+  font-size: 1.7rem;
+  margin-top: 0.6rem;
+}
+
+.section-head p {
+  color: var(--ink-soft);
+  margin-top: 0.75rem;
+}
+
+.sp-waiting-muted {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}

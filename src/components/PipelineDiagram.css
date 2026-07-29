@@ -1,0 +1,68 @@
+/* A schematic block diagram — numbered stages connected by a dashed
+   signal line, matching the same visual language as SignalPath. Numbering
+   is kept because this genuinely is an ordered pipeline: each stage's
+   output is the next stage's input. */
+.pipeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.pipeline__stage {
+  position: relative;
+  background: var(--paper-raised);
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  border-right: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+}
+
+.pipeline__stage:nth-child(3n) {
+  border-right: none;
+}
+
+.pipeline__stage:nth-last-child(-n + 3) {
+  border-bottom: none;
+}
+
+.pipeline__id {
+  font-family: var(--font-data);
+  color: var(--signal);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.pipeline__name {
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+
+.pipeline__detail {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 860px) {
+  .pipeline {
+    grid-template-columns: 1fr;
+  }
+
+  .pipeline__stage {
+    border-right: none;
+  }
+
+  .pipeline__stage:nth-last-child(-n + 3) {
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .pipeline__stage:last-child {
+    border-bottom: none;
+  }
+}

@@ -21,10 +21,15 @@ class BrowserExecutor:
         "page": command_config.page_scroll_length(),
     }
 
+    ZOOM_LEVELS = command_config.get_zoom_values()
+    DEFAULT_ZOOM = command_config.get_default_zoom()
+
     def __init__(self, page, safety_policy: SafetyPolicy) -> None:
         # Keep the page instance supplied by app.py; do not attach to random tabs.
         self._page = page
         self._safety_policy = safety_policy
+
+        self._zoom_level = self.DEFAULT_ZOOM
 
     def execute(self, command: DesktopCommand) -> str:
         """Dispatch a validated command to the appropriate action method."""
@@ -35,6 +40,8 @@ class BrowserExecutor:
         if command.action == "stop":
             # app.py handles stopping because it owns the queue and shutdown event.
             return "Stop command received."
+        if command.action == "zoom":
+            return self._zoom(command)
         raise ValueError(f"Unsupported command action: {command.action!r}")
 
     def _scroll(self, command: DesktopCommand) -> str:
@@ -103,3 +110,35 @@ class BrowserExecutor:
             return f"Click failed safely: {type(error).__name__}: {error}"
 
         return f'Clicked the link named "{link_name}".'
+
+    def _zoom(self, command: DesktopCommand) -> str:
+        if command.direction == "reset":
+            self._zoom_level = self.DEFAULT_ZOOM
+
+        elif command.direction == "in":
+            next_levels = [
+                level for level in self.ZOOM_LEVELS if level > self._zoom_level
+            ]
+            if not next_levels:
+                return "Maximum zoom reached."
+
+            self._zoom_level = next_levels[0]
+
+        elif command.direction == "out":
+            previous_levels = [
+                level for level in self.ZOOM_LEVELS if level < self._zoom_level
+            ]
+            if not previous_levels:
+                return "Minimum zoom reached."
+
+            self._zoom_level = previous_levels[-1]
+
+        else:
+            return "Invalid zoom direction."
+
+        self._page.evaluate(
+            "(level) => { document.documentElement.style.zoom = level; }",
+            self._zoom_level,
+        )
+
+        return f"Zoom set to {round(self._zoom_level * 100)}%."

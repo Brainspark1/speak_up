@@ -93,3 +93,9 @@ class CommandConfig:
 
     def page_scroll_length(self):
         return self.data["constants"]["scroll_distances"]["page"]
+
+    def get_zoom_values(self):
+        return self.data["constants"]["zoom"]["zoom_levels"]
+
+    def get_default_zoom(self):
+        return self.data["constants"]["zoom"]["default_zoom"]

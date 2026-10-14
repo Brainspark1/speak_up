@@ -5,9 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-
-Action = Literal["scroll", "click_link", "stop"]
-Direction = Literal["up", "down"]
+Action = Literal["scroll", "click_link", "stop", "zoom"]
+Direction = Literal["up", "down", "in", "out", "reset"]
 ScrollAmount = Literal["small", "page"]
 
 
@@ -39,8 +38,22 @@ class DesktopCommand:
             return
 
         if self.action == "stop":
-            if any(value is not None for value in (self.direction, self.amount, self.link_name)):
+            if any(
+                value is not None
+                for value in (self.direction, self.amount, self.link_name)
+            ):
                 raise ValueError("Stop commands cannot include additional arguments.")
+            return
+
+        if self.action == "zoom":
+            if self.direction not in ("in", "out", "reset"):
+                raise ValueError(
+                    "Zoom commands require direction 'in', 'out', or 'reset'."
+                )
+            if self.amount is not None or self.link_name is not None:
+                raise ValueError(
+                    "Zoom commands cannot include scroll or link arguments."
+                )
             return
 
         raise ValueError(f"Unsupported action: {self.action!r}")

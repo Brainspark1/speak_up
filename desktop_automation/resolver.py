@@ -180,7 +180,6 @@ class DesktopCommandResolver:
 
     @staticmethod
     def _build_command(config):
-        """Build a DesktopCommand from a JSON command entry."""
         action = config.get("action")
 
         if action == "stop":
@@ -191,6 +190,12 @@ class DesktopCommandResolver:
                 action="scroll",
                 direction=config["direction"],
                 amount=config["amount"],
+            )
+
+        if action == "zoom":
+            return DesktopCommand(
+                action="zoom",
+                direction=config["direction"],
             )
 
         logger.warning("Unsupported configured action: %r", action)

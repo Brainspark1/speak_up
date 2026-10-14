@@ -1,0 +1,123 @@
+{
+  "commands": {
+    "stop": {
+      "description": "Stop or cancel the current automation",
+      "phrases": [
+        "stop",
+        "cancel",
+        "stop automation",
+        "cancel command",
+        "stop browsing",
+        "halt"
+      ],
+      "action": "stop"
+    },
+    "scroll_down": {
+      "description": "Scroll down one page",
+      "phrases": [
+        "scroll down",
+        "scroll down one page",
+        "scroll down a page",
+        "move down the page"
+      ],
+      "action": "scroll",
+      "direction": "down",
+      "amount": "page"
+    },
+    "scroll_up": {
+      "description": "Scroll up one page",
+      "phrases": [
+        "scroll up",
+        "scroll up one page",
+        "scroll up a page",
+        "move up the page"
+      ],
+      "action": "scroll",
+      "direction": "up",
+      "amount": "page"
+    },
+    "scroll_down_small": {
+      "description": "Scroll down a small amount",
+      "phrases": [
+        "scroll down a little",
+        "scroll down slightly",
+        "move down a bit"
+      ],
+      "action": "scroll",
+      "direction": "down",
+      "amount": "small"
+    },
+    "scroll_up_small": {
+      "description": "Scroll up a small amount",
+      "phrases": ["scroll up a little", "scroll up slightly", "move up a bit"],
+      "action": "scroll",
+      "direction": "up",
+      "amount": "small"
+    },
+    "click_link": {
+      "description": "Click or open a link by its visible name",
+      "phrases": ["click", "click on", "click the", "open", "go to"],
+      "action": "click_link",
+      "requires_target": true
+    }
+  },
+  "links": {
+    "step_1": {
+      "name": "Step 1",
+      "description": "The first step of the recipe",
+      "phrases": [
+        "step 1",
+        "step one",
+        "first step",
+        "the first step",
+        "recipe step one",
+        "begin the recipe"
+      ]
+    },
+    "step_2": {
+      "name": "Step 2",
+      "description": "The second step of the recipe",
+      "phrases": [
+        "step 2",
+        "step two",
+        "second step",
+        "the second step",
+        "recipe step two",
+        "next step"
+      ]
+    },
+    "step_3": {
+      "name": "Step 3",
+      "description": "The third step of the recipe",
+      "phrases": [
+        "step 3",
+        "step three",
+        "third step",
+        "the third step",
+        "recipe step three",
+        "final step"
+      ]
+    },
+    "lost": {
+      "name": "Lost",
+      "description": "Return to step 1",
+      "phrases": [
+        "return to step 1",
+        "lost",
+        "confused",
+        "the lost step",
+        "what to do"
+      ]
+    }
+  },
+  "constants": {
+    "scroll_distances": {
+      "small": 240,
+      "page": 650
+    }
+  },
+  "similarity": {
+    "action_threshold": 0.12,
+    "link_threshold": 0.12
+  }
+}

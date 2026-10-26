@@ -81,6 +81,7 @@ class DesktopCommandResolver:
 
         # First, try matching the ACTION entity directly.
         if action_text:
+            print(f"Text passed to action mapper: {action_text!r}", flush=True)
             action_match = self.semantic_mapper.find_best_action(action_text)
 
             if action_match is not None:
